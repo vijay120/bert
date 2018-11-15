@@ -291,21 +291,21 @@ class ImdbProcessor(DataProcessor):
   def get_train_examples(self, data_dir):
     """See base class."""
     return self._create_examples(
-        self._read_csv(os.path.join(data_dir, "train.csv")), "train")
+        self._read_tsv(os.path.join(data_dir, "trainData.tsv")), "train")
 
   def get_dev_examples(self, data_dir):
     """See base class."""
     return self._create_examples(
-        self._read_csv(os.path.join(data_dir, "dev.csv")), "dev")
+        self._read_tsv(os.path.join(data_dir, "devData.tsv")), "dev")
 
   def get_test_examples(self, data_dir):
     """See base class."""
     return self._create_examples(
-        self._read_csv(os.path.join(data_dir, "test.csv")), "test")
+        self._read_tsv(os.path.join(data_dir, "testData.tsv")), "test")
 
   def get_labels(self):
     """See base class."""
-    return ["0", "1", "2"]
+    return ["0", "1"]
 
   def _create_examples(self, lines, set_type):
     """Creates examples for the training and dev sets."""
@@ -314,16 +314,11 @@ class ImdbProcessor(DataProcessor):
       if i == 0:
         continue
       guid = "%s-%s" % (set_type, i)
-      text = tokenization.convert_to_unicode(line[2])
+      text = tokenization.convert_to_unicode(line[1])
       if set_type == "test":
-        label = "0"
+        label = tokenization.convert_to_unicode("0")
       else:
-        if line[3] == 'pos':
-            label = tokenization.convert_to_unicode("1")
-        elif line[3] == 'neg':
-            label = tokenization.convert_to_unicode("0")
-        else:
-            label = tokenization.convert_to_unicode("2")
+        label = tokenization.convert_to_unicode(line[2])
       examples.append(InputExample(guid=guid, text_a=text, label=label))
     return examples
 
